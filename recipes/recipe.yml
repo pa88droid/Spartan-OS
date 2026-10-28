@@ -1,7 +1,7 @@
 
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-name: Spartan-OS
+name: spartan-os
 description: Fedora Kinoite KDE with multimedia, development, virtualization and broad application support
 base-image: ghcr.io/ublue-os/kinoite-main
 image-version: latest
