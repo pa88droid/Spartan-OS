@@ -1,0 +1,35 @@
+#!/usr/bin/bash
+set -euo pipefail
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+MARKER="$CONFIG_DIR/spartan-os-layout-v1"
+LAYOUT="/usr/share/spartan-os/plasma-layout.js"
+
+# Apply this preset once per user, after the Plasma session is available.
+if [[ -e "$MARKER" ]]; then
+    exit 0
+fi
+
+mkdir -p "$CONFIG_DIR"
+
+if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
+    plasma-apply-colorscheme BreezeDark >/dev/null 2>&1 || true
+fi
+
+QDBUS="$(command -v qdbus6 || command -v qdbus || true)"
+if [[ -z "$QDBUS" || ! -r "$LAYOUT" ]]; then
+    exit 0
+fi
+
+for attempt in {1..30}; do
+    if "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'print("Spartan OS Plasma ready")' >/dev/null 2>&1; then
+        if "$QDBUS" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$(cat "$LAYOUT")" >/dev/null 2>&1; then
+            touch "$MARKER"
+        fi
+        exit 0
+    fi
+    sleep 2
+done
+
+# If Plasma was not ready, retry on the next login.
+exit 0

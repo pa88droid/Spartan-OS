@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Spartan OS first-login desktop setup
+Comment=Apply the Spartan OS dark theme and single bottom panel
+Exec=/usr/bin/spartan-first-login
+Terminal=false
+OnlyShowIn=KDE;
+X-KDE-autostart-after=panel
